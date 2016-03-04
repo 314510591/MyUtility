@@ -65,7 +65,7 @@ return s_pInstance; \
 #pragma mark - UIImage (YMQ_Utilities)
 
 @interface UIImage (YMQ_Utilities)
-+ (UIImage *)imageWithPNGlName:(NSString *)name;
++ (UIImage *)imageWithPNGName:(NSString *)name;
 + (UIImage *)imageWithJPGName:(NSString *)name;
 
 /*
@@ -83,6 +83,7 @@ return s_pInstance; \
 - (UIImage *)stretchImageForCenter;
 - (UIImage *)stretchImageForVertical;
 - (UIImage *)stretchImageForAcross;
+- (UIImage *)drawRectWithRoundedCorner:(CGFloat)radius WithSize:(CGSize)size;
 
 @end
 
@@ -136,6 +137,7 @@ return s_pInstance; \
 
 - (void)setImageName:(NSString *)imageName;
 - (void)fillImageView:(NSString *)imageName;
+- (void)addCorner:(CGFloat)radius;
 
 @end
 
@@ -145,12 +147,10 @@ return s_pInstance; \
 
 + (UILabel *)creatLabelWithFrame:(CGRect)frame WithText:(NSString *)text WithFont:(CGFloat)font WithTextColor:(UIColor *)textColor;
 
-
-- (CGRect)autoResize;
-- (CGRect)autoResizeHorizontal;
-- (CGRect)autoResizeAcross;
 //设置label中不同字体的样式 颜色
 - (void)SetTextWithColor:(UIColor *)color WithRange:(NSRange)range;
+//设置行高，并根据行高计算高度
+- (void)setTextTypeWithFont:(CGFloat)font WithColor:(UIColor *)textColor WithLineHeight:(CGFloat)lineHeight;
 @end
 
 

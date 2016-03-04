@@ -7,7 +7,6 @@
 //
 
 #import "UIViewAdditions.h"
-#import "UICommon.h"
 
 @implementation UIView (UIViewAdditions)
 
@@ -154,40 +153,6 @@
     self.frame = frame;
 }
 
-- (CGFloat)orientationWidth {
-    return UIInterfaceOrientationIsLandscape(deviceOrientation())
-    ? self.height : self.width;
-}
-
-- (CGFloat)orientationHeight {
-    return UIInterfaceOrientationIsLandscape(deviceOrientation())
-    ? self.width : self.height;
-}
-
-- (UIView*)descendantOrSelfWithClass:(Class)cls {
-    if ([self isKindOfClass:cls])
-        return self;
-    
-    for (UIView* child in self.subviews) {
-        UIView* it = [child descendantOrSelfWithClass:cls];
-        if (it)
-            return it;
-    }
-    
-    return nil;
-}
-
-- (UIView*)ancestorOrSelfWithClass:(Class)cls {
-    if ([self isKindOfClass:cls]) {
-        return self;
-        
-    } else if (self.superview) {
-        return [self.superview ancestorOrSelfWithClass:cls];
-        
-    } else {
-        return nil;
-    }
-}
 
 - (void)removeAllSubviews {
     while (self.subviews.count) {
@@ -196,105 +161,6 @@
     }
 }
 
-
-#ifdef DEBUG
-
-//- (void)simulateTapAtPoint:(CGPoint)location {
-//    UITouch *touch = [[[UITouch alloc] initInView:self location:location] autorelease];
-//    
-//    UIEvent *eventDown = [[[UIEvent alloc] initWithTouch:touch] autorelease];
-//    [touch.view touchesBegan:[NSSet setWithObject:touch] withEvent:eventDown];
-//    
-//    [touch changeToPhase:UITouchPhaseEnded];
-//    
-//    UIEvent *eventUp = [[[UIEvent alloc] initWithTouch:touch] autorelease];
-//    [touch.view touchesEnded:[NSSet setWithObject:touch] withEvent:eventUp];
-//}
-
-#endif
-
-- (CGPoint)offsetFromView:(UIView*)otherView {
-    CGFloat x = 0, y = 0;
-    for (UIView* view = self; view && view != otherView; view = view.superview) {
-        x += view.left;
-        y += view.top;
-    }
-    return CGPointMake(x, y);
-}
-
-- (NSDictionary *)userInfoForKeyboardNotification {
-    CGRect screenFrame = screenBounds();
-    CGRect bounds = CGRectMake(0, 0, screenFrame.size.width, self.height);
-    CGPoint centerBegin = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
-                                      screenFrame.size.height + floor(self.height/2));
-    CGPoint centerEnd = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
-                                    screenFrame.size.height - floor(self.height/2));
-    
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
-            [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
-            [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
-            [NSNumber numberWithDouble:kDefaultTransitionDuration], UIKeyboardAnimationDurationUserInfoKey,
-            [NSNumber numberWithBool:NO], kKeyboard,
-            nil];
-}
-
-- (void)presentAsKeyboardAnimationDidStop {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIKeyboardDidShowNotification
-                                                        object:self
-                                                      userInfo:[self
-                                                                userInfoForKeyboardNotification]];
-}
-
-- (void)dismissAsKeyboardAnimationDidStop {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIKeyboardDidHideNotification
-                                                        object:self
-                                                      userInfo:[self
-                                                                userInfoForKeyboardNotification]];
-    [self removeFromSuperview];
-}
-
-- (void)presentAsKeyboardInView:(UIView*)containingView {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIKeyboardWillShowNotification
-                                                        object:self
-                                                      userInfo:[self
-                                                                userInfoForKeyboardNotification]];
-    
-    self.top = containingView.height;
-    [containingView addSubview:self];
-    
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:kDefaultTransitionDuration];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDidStopSelector:@selector(presentAsKeyboardAnimationDidStop)];
-    self.top -= self.height;
-    [UIView commitAnimations];
-}
-
-- (void)dismissAsKeyboard:(BOOL)animated {
-    if (!CGRectIntersectsRect([UIScreen mainScreen].bounds, self.frame)) return;
-        
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIKeyboardWillHideNotification
-                                                        object:self
-                                                      userInfo:[self
-                                                                userInfoForKeyboardNotification]];
-    
-    if (animated) {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:kDefaultTransitionDuration];
-        [UIView setAnimationDelegate:self];
-        [UIView setAnimationDidStopSelector:@selector(dismissAsKeyboardAnimationDidStop)];
-    }
-    
-    self.top += self.height;
-    
-    if (animated) {
-        [UIView commitAnimations];
-        
-    } else {
-        [self dismissAsKeyboardAnimationDidStop];
-    }
-}
 
 - (UIViewController *)controller{
     for (UIView* next = self; next; next = next.superview) {

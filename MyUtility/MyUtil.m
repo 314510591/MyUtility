@@ -93,7 +93,7 @@
     return [UIImage imageWithContentsOfFile:path];
 }
 
-+ (UIImage *)imageWithPNGlName:(NSString *)name
++ (UIImage *)imageWithPNGName:(NSString *)name
 {
     NSString *path = nil;
     if ( [name isAbsolutePath] ) {
@@ -194,6 +194,23 @@
     return newImage;
 }
 
+- (UIImage *)drawRectWithRoundedCorner:(CGFloat)radius WithSize:(CGSize)size
+{
+    CGRect rect = CGRectMake(0, 0, size.width, size.height);
+    UIGraphicsBeginImageContextWithOptions(rect.size, false, [UIScreen mainScreen].scale);
+    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius];
+    CGContextAddPath(UIGraphicsGetCurrentContext(),
+                     path.CGPath);
+    CGContextClip(UIGraphicsGetCurrentContext());
+    [self drawInRect:rect];
+    
+    CGContextDrawPath(UIGraphicsGetCurrentContext(), kCGPathFillStroke);
+    UIImage *output = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return output;
+}
+
 @end
 
 #pragma mark - UIButton (YMQ_Utilities)
@@ -218,8 +235,8 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = frame;
-    [btn setNormalBgImage:[UIImage imageWithPNGlName:nIamgeName]];
-    [btn setHighlightedBgImage:[UIImage imageWithPNGlName:hImageName]];
+    [btn setNormalBgImage:[UIImage imageWithPNGName:nIamgeName]];
+    [btn setHighlightedBgImage:[UIImage imageWithPNGName:hImageName]];
     [btn touchUpInsideTarget:target action:selector];
     return btn;
 }
@@ -370,14 +387,22 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 
 - (void)setImageName:(NSString *)imageName
 {
-    UIImage *newImage = [UIImage imageWithPNGlName:imageName];
+    UIImage *newImage = [UIImage imageWithPNGName:imageName];
     self.image = newImage;
 }
 
 - (void)fillImageView:(NSString *)imageName
 {
-    UIImage *newImage = [UIImage imageWithPNGlName:imageName];
+    UIImage *newImage = [UIImage imageWithPNGName:imageName];
     self.backgroundColor = [UIColor colorWithPatternImage:newImage];
+}
+
+- (void)addCorner:(CGFloat)radius
+{
+    if (self.image)
+    {
+        self.image = [self.image drawRectWithRoundedCorner:radius WithSize:self.bounds.size];
+    }
 }
 
 @end
@@ -390,34 +415,11 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     UILabel *label = [[[UILabel alloc]initWithFrame:frame]autorelease];
     label.text = text;
-    label.textColor = textColor;
-    label.font = [UIFont systemFontOfSize:font];
     label.backgroundColor = [UIColor clearColor];
-    label.frame = [label autoResize];
+    [label setTextTypeWithFont:font WithColor:textColor WithLineHeight:0];
     return label;
 }
 
-- (CGRect)autoResize
-{
-    CGRect frame = self.frame;
-    CGSize textSize = [self.text sizeWithAttributes:@{NSFontAttributeName:self.font}];
-    frame.size = textSize;
-    self.frame = frame;
-    return frame;
-}
-
-- (CGRect)autoResizeHorizontal
-{
-    CGFloat height = self.frame.size.height;
-    NSDictionary *attributes = @{NSFontAttributeName: self.font};
-    // NSString class method: boundingRectWithSize:options:attributes:context is
-    // available only on ios7.0 sdk.
-    CGRect rect = [self.text boundingRectWithSize:CGSizeMake(MAXFLOAT, height)
-                                     options:NSStringDrawingUsesLineFragmentOrigin
-                                  attributes:attributes
-                                     context:nil];
-    return rect;
-}
 
 - (CGRect)autoResizeAcross
 {
@@ -435,12 +437,28 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 - (void)SetTextWithColor:(UIColor *)color WithRange:(NSRange)range
 {
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:self.text];
-    
     [str addAttribute:NSForegroundColorAttributeName value:color range:range];
-    
-//    [str addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Arial-BoldItalicMT" size:30.0] range:NSMakeRange(0, 5)];  //设置字体样式
     self.attributedText = str;
     [str release];
+}
+
+- (void)setTextTypeWithFont:(CGFloat)font WithColor:(UIColor *)textColor WithLineHeight:(CGFloat)lineHeight
+{
+    NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc] initWithString:self.text];
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 0;
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [self.text length])];
+    [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:font] range:NSMakeRange(0, [self.text length])];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, [self.text length])];
+    self.attributedText = attributedString;
+    
+    CGRect rect = [attributedString boundingRectWithSize:CGSizeMake(self.bounds.size.width, 10000) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
+    
+    CGRect frame = self.frame;
+    frame.size.height = rect.size.height;
+    self.frame = frame;
+    
+    [self sizeToFit];
 }
 
 @end
@@ -622,6 +640,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     [recognizer release];
 }
 
+
 - (void)removeAllSubviews
 {
     for (UIView *view in self.subviews) {
@@ -638,7 +657,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     if ([self.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)])
     {
-        [self.navigationBar setBackgroundImage:[UIImage imageWithPNGlName:name] forBarMetrics:UIBarMetricsDefault];
+        [self.navigationBar setBackgroundImage:[UIImage imageWithPNGName:name] forBarMetrics:UIBarMetricsDefault];
         
     }
 }
@@ -680,11 +699,11 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     if ([MyUtil isIOS7OrLater])
     {
-        return [UIImage imageWithPNGlName:@"top_xingshiguiji120"];
+        return [UIImage imageWithPNGName:@"top_xingshiguiji120"];
     }
     else
     {
-        return [UIImage imageWithPNGlName:@"top_xingshiguiji88"];
+        return [UIImage imageWithPNGName:@"top_xingshiguiji88"];
     }
     
 }
@@ -724,8 +743,8 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
 
     UIBarButtonItem *backBarButton = [[[UIBarButtonItem alloc] init]autorelease];
-    [backBarButton setBackButtonBackgroundImage:[[UIImage imageWithPNGlName:@"back_01"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 15, 4)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    [backBarButton setBackButtonBackgroundImage:[[UIImage imageWithPNGlName:@"back_02"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 15, 4)] forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
+    [backBarButton setBackButtonBackgroundImage:[[UIImage imageWithPNGName:@"back_01"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 15, 4)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    [backBarButton setBackButtonBackgroundImage:[[UIImage imageWithPNGName:@"back_02"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 15, 4)] forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
 
     
     self.navigationController.navigationItem.backBarButtonItem = backBarButton;
@@ -747,7 +766,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 - (UIBarButtonItem *)barBtnWithTitle:(NSString *)title Image:(NSString *)name action:(SEL)selector
 {
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btn setNormalBgImage:[UIImage imageWithPNGlName:name]];
+    [btn setNormalBgImage:[UIImage imageWithPNGName:name]];
     [btn addTarget:self action:selector forControlEvents:UIControlEventTouchCancel];
     
     UIBarButtonItem *btnItem = [[[UIBarButtonItem alloc] initWithCustomView:btn]autorelease];
