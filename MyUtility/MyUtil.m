@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <QuartzCore/QuartzCore.h>
+@import CoreText;
 
 #pragma mark - StringUtils
 
@@ -531,6 +532,19 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     return [phoneTest evaluateWithObject:mobile];
 }
 
++ (BOOL) validateNum:(NSString *)str
+{
+    //^-?(0|[1-9]\d*)(\.\d+[^0])?$ 合法实数
+    NSString *regex = @"^-?(0|[1-9]\\d*)(\\.\\d{0,2})?$"; //保留两位小数
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+    BOOL isMatch = [pred evaluateWithObject:str];
+    if (!isMatch) {
+        
+        return NO;
+    }
+    return YES;
+}
+
 - (CGFloat)widthWithFont:(UIFont *)font WithHeight:(CGFloat)height
 {
 
@@ -830,7 +844,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 
 @end
 #pragma mark - NSDate (YMQ_Utilities)
-
+static NSDateFormatter *_internetDateTimeFormatter = nil;
 @implementation NSDate (YMQ_Utilities)
 
 - (NSString *)timeString
@@ -1003,12 +1017,147 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     return resultStr;
 }
 
++ (NSDateFormatter *)internetDateTimeFormatter {
+    @synchronized(self) {
+        if (!_internetDateTimeFormatter) {
+            NSLocale *en_US_POSIX = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+            _internetDateTimeFormatter = [[NSDateFormatter alloc] init];
+            [_internetDateTimeFormatter setLocale:en_US_POSIX];
+            [_internetDateTimeFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:8]];
+        }
+    }
+    return _internetDateTimeFormatter;
+}
+
+// Get a date from a string - hint can be used to speed up
++ (NSDate *)dateFromInternetDateTimeString:(NSString *)dateString formatHint:(DateFormatHint)hint {
+    // Keep dateString around a while (for thread-safety)
+    NSDate *date = nil;
+    if (dateString) {
+        if (hint != DateFormatHintRFC3339) {
+            // Try RFC822 first
+            date = [NSDate dateFromRFC822String:dateString];
+            if (!date) date = [NSDate dateFromRFC3339String:dateString];
+        } else {
+            // Try RFC3339 first
+            date = [NSDate dateFromRFC3339String:dateString];
+            if (!date) date = [NSDate dateFromRFC822String:dateString];
+        }
+    }
+    // Finished with date string
+    return date;
+}
+
+// See http://www.faqs.org/rfcs/rfc822.html
++ (NSDate *)dateFromRFC822String:(NSString *)dateString {
+    // Keep dateString around a while (for thread-safety)
+    NSDate *date = nil;
+    if (dateString) {
+        NSDateFormatter *dateFormatter = [NSDate internetDateTimeFormatter];
+        @synchronized(dateFormatter) {
+            
+            // Process
+            NSString *RFC822String = [[NSString stringWithString:dateString] uppercaseString];
+            if ([RFC822String rangeOfString:@","].location != NSNotFound) {
+                if (!date) { // Sun, 19 May 2002 15:21:36 GMT
+                    [dateFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm:ss zzz"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+                if (!date) { // Sun, 19 May 2002 15:21 GMT
+                    [dateFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm zzz"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+                if (!date) { // Sun, 19 May 2002 15:21:36
+                    [dateFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm:ss"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+                if (!date) { // Sun, 19 May 2002 15:21
+                    [dateFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+            } else {
+                if (!date) { // 19 May 2002 15:21:36 GMT
+                    [dateFormatter setDateFormat:@"d MMM yyyy HH:mm:ss zzz"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+                if (!date) { // 19 May 2002 15:21 GMT
+                    [dateFormatter setDateFormat:@"d MMM yyyy HH:mm zzz"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+                if (!date) { // 19 May 2002 15:21:36
+                    [dateFormatter setDateFormat:@"d MMM yyyy HH:mm:ss"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+                if (!date) { // 19 May 2002 15:21
+                    [dateFormatter setDateFormat:@"d MMM yyyy HH:mm"];
+                    date = [dateFormatter dateFromString:RFC822String];
+                }
+            }
+            if (!date) NSLog(@"Could not parse RFC822 date: \"%@\" Possible invalid format.", dateString);
+            
+        }
+    }
+    // Finished with date string
+    return date;
+}
+
+// See http://www.faqs.org/rfcs/rfc3339.html
++ (NSDate *)dateFromRFC3339String:(NSString *)dateString {
+    // Keep dateString around a while (for thread-safety)
+    NSDate *date = nil;
+    if (dateString) {
+        NSDateFormatter *dateFormatter = [NSDate internetDateTimeFormatter];
+        @synchronized(dateFormatter) {
+            
+            // Process date
+            NSString *RFC3339String = [[NSString stringWithString:dateString] uppercaseString];
+            RFC3339String = [RFC3339String stringByReplacingOccurrencesOfString:@"Z" withString:@"-0000"];
+            // Remove colon in timezone as it breaks NSDateFormatter in iOS 4+.
+            // - see https://devforums.apple.com/thread/45837
+            if (RFC3339String.length > 20) {
+                RFC3339String = [RFC3339String stringByReplacingOccurrencesOfString:@":"
+                                                                         withString:@""
+                                                                            options:0
+                                                                              range:NSMakeRange(20, RFC3339String.length-20)];
+            }
+            if (!date) { // 1996-12-19T16:39:57-0800
+                [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ssZZZ"];
+                date = [dateFormatter dateFromString:RFC3339String];
+            }
+            if (!date) { // 1937-01-01T12:00:27.87+0020
+                [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZZZ"];
+                date = [dateFormatter dateFromString:RFC3339String];
+            }
+            if (!date) { // 1937-01-01T12:00:27
+                [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss"];
+                date = [dateFormatter dateFromString:RFC3339String];
+            }
+            if (!date) NSLog(@"Could not parse RFC3339 date: \"%@\" Possible invalid format.", dateString);
+            
+        }
+    }
+    // Finished with date string
+    return date;
+}
 
 @end
 
 #pragma mark - MyUtil
 
 @implementation MyUtil
+
++ (UIFont*)customFontWithPath:(NSString*)path size:(CGFloat)size
+{
+    NSURL *fontUrl = [NSURL fileURLWithPath:path];
+    CGDataProviderRef fontDataProvider = CGDataProviderCreateWithURL((__bridge CFURLRef)fontUrl);
+    CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProvider);
+    CGDataProviderRelease(fontDataProvider);
+    CTFontManagerRegisterGraphicsFont(fontRef, NULL);
+    NSString *fontName = CFBridgingRelease(CGFontCopyPostScriptName(fontRef));
+    UIFont *font = [UIFont fontWithName:fontName size:size];
+    CGFontRelease(fontRef);
+    return font;
+}
 
 + (UIButton *)buttonWithFrame:(CGRect)frame
                        target:target

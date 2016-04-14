@@ -166,6 +166,8 @@ return s_pInstance; \
 + (BOOL) validateEmail:(NSString *)email;
 + (BOOL) validateMobile:(NSString *)mobile;
 
++ (BOOL) validateNum:(NSString *)str;
+
 - (CGFloat)widthWithFont:(UIFont *)font WithHeight:(CGFloat)height;
 - (CGFloat)heightWithFont:(UIFont *)font WithWidth:(CGFloat)width;
 
@@ -233,6 +235,12 @@ return s_pInstance; \
 @end
 
 #pragma mark - NSDate (YMQ_Utilities)
+typedef enum {
+    DateFormatHintNone,
+    DateFormatHintRFC822,
+    DateFormatHintRFC3339
+} DateFormatHint;
+
 @interface NSDate (YMQ_Utilities)
 
 - (NSString *)timeString;
@@ -269,9 +277,18 @@ return s_pInstance; \
 
 + (NSString *)getMonthBeginAndEndWith:(NSDate *)newDate Type:(NSCalendarUnit)type;
 
+//请求头获取服务器时间  格式化
++ (NSDate *)dateFromInternetDateTimeString:(NSString *)dateString
+                                formatHint:(DateFormatHint)hint;
++ (NSDate *)dateFromRFC822String:(NSString *)dateString;
++ (NSDate *)dateFromRFC3339String:(NSString *)dateString;
+
+
 @end
 
 @interface MyUtil : NSObject
+//根据ttf字体文件获取字体样式名称
++ (UIFont*)customFontWithPath:(NSString*)path size:(CGFloat)size;
 
 + (UIButton *)buttonWithFrame:(CGRect)frame
                        target:target
