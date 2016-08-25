@@ -31,7 +31,7 @@
 
 - (id) autoCopyWithZone:(NSZone*)zone
 {
-    id another = [[[[self class] allocWithZone:zone] init] autorelease];
+    id another = [[[self class] allocWithZone:zone] init];
     
     unsigned int ivarsCnt = 0;
     Ivar *ivars = class_copyIvarList([self class], &ivarsCnt);
@@ -43,22 +43,22 @@
         
         if([value isKindOfClass:[NSArray class]])
         {
-            NSArray* copiedArray = [[[[value class] alloc] initWithArray:value copyItems:YES] autorelease];
+            NSArray* copiedArray = [[[value class] alloc] initWithArray:value copyItems:YES];
             [another setValue:copiedArray forKey:key];
         }
         else if([value isKindOfClass:[NSDictionary class]])
         {
-            NSDictionary* dict = [[[[value class] alloc] initWithDictionary:value copyItems:YES] autorelease];
+            NSDictionary* dict = [[[value class] alloc] initWithDictionary:value copyItems:YES];
             [another setValue:dict forKey:key];
         }
         else if([value isKindOfClass:[NSSet class]])
         {
-            NSSet* set = [[[[value class] alloc] initWithSet:value copyItems:YES] autorelease];
+            NSSet* set = [[[value class] alloc] initWithSet:value copyItems:YES];
             [another setValue:set forKey:key];
         }
         else if([value isKindOfClass:[NSOrderedSet class]])
         {
-            NSOrderedSet* orderedSet = [[[[value class] alloc] initWithOrderedSet:value copyItems:YES] autorelease];
+            NSOrderedSet* orderedSet = [[[value class] alloc] initWithOrderedSet:value copyItems:YES];
             [another setValue:orderedSet forKey:key];
         }
         else

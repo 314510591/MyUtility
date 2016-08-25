@@ -30,7 +30,7 @@
     NSLog(@"%f",a/1.5);
 
     [self.view addSubview:label];
-    [label release];
+    
     
     NSDate *date1 = [NSDate date];
     NSString *str = [NSDate getMonthBeginAndEndWith:date1 Type:NSCalendarUnitMonth];

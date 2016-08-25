@@ -300,8 +300,6 @@ typedef enum {
 + (BOOL)isValidURL:(NSString *)urlString;
 
 
-+ (id)getObjectFromClassName:(NSString *)className;
-
 + (BOOL)checkNetIsConnect;
 + (CGFloat)screenWidth;
 + (CGFloat)screenHeight;

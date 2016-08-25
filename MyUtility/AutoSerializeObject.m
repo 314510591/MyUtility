@@ -21,7 +21,6 @@
 - (void) dealloc
 {
     [self clearAllMemberObjects];
-    [super dealloc];
 }
 
 + (id) fromJson:(NSDictionary*)jsonObj
@@ -29,7 +28,7 @@
    // NSLog(@"class: %@", NSStringFromClass([self class]));
     
     
-    id item = [[[[self class] alloc] init] autorelease];
+    id item = [[[self class] alloc] init];
     
     for(NSString* key in jsonObj.allKeys)
     {
@@ -75,7 +74,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[self autoCopyWithZone:zone]retain];
+    return [self autoCopyWithZone:zone];
 }
 
 @end

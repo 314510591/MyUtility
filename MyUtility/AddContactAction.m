@@ -10,21 +10,6 @@
 #import <AddressBook/AddressBook.h>
 @implementation PersonDetailInfo
 
-- (void)dealloc
-{
-    [_info_name release];
-    [_info_position release];
-    [_info_department release];
-    [_info_mobile release];
-    [_info_tel release];
-    [_info_email release];
-    [_info_company release];
-    [_info_fax release];
-    [_info_address release];
-    [_info_url release];
-    [super dealloc];
-}
-
 
 @end
 
@@ -44,7 +29,7 @@
                                              });
     
     dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-    dispatch_release(sema);
+    
 
     
     CFArrayRef records;
@@ -61,8 +46,8 @@
     ABRecordRef record = NULL;
     for (NSInteger i=0; i<CFArrayGetCount(records); i++) {
         record = CFArrayGetValueAtIndex(records, i);
-        NSString *firstName = (NSString *)ABRecordCopyValue(record, kABPersonFirstNameProperty);
-        [firstName autorelease];
+        NSString *firstName = (__bridge NSString *)ABRecordCopyValue(record, kABPersonFirstNameProperty);
+        
         if (firstName && [firstName isEqualToString:person.info_name])
         {
             exist = YES;
@@ -77,14 +62,14 @@
         CFErrorRef error;
         
         //CFStringRef cf_name = (CFTypeRef)name;
-        CFStringRef cf_num = (CFTypeRef)person.info_mobile;
-        CFStringRef cf_telNum = (CFTypeRef)person.info_tel;
+        CFStringRef cf_num = (__bridge CFTypeRef)person.info_mobile;
+        CFStringRef cf_telNum = (__bridge CFTypeRef)person.info_tel;
         ABMutableMultiValueRef multi = ABRecordCopyValue(record, kABPersonPhoneProperty);
         
         ABMutableMultiValueRef multiPhone = ABMultiValueCreateMutableCopy(multi);
         
-        NSArray *phones = (NSArray *)ABMultiValueCopyArrayOfAllValues(multiPhone);
-        [phones autorelease];
+        NSArray *phones = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(multiPhone);
+        
         BOOL phoneInRecord = NO;
         for (NSString* phone in phones)
         {
@@ -159,13 +144,13 @@
         ABRecordRef record = ABPersonCreate();
         CFErrorRef error;
         
-        CFStringRef cf_name = (CFTypeRef)person.info_name;
-        CFStringRef cf_num = (CFTypeRef)person.info_tel;
-        CFStringRef cf_mobile = (CFTypeRef)person.info_mobile;
-        CFStringRef cf_email = (CFTypeRef)person.info_email;
-        CFStringRef cf_postion = (CFTypeRef)person.info_position;
-        CFStringRef cf_company = (CFTypeRef)person.info_company;
-        CFStringRef cf_url = (CFTypeRef)person.info_url;
+        CFStringRef cf_name = (__bridge CFTypeRef)person.info_name;
+        CFStringRef cf_num = (__bridge CFTypeRef)person.info_tel;
+        CFStringRef cf_mobile = (__bridge CFTypeRef)person.info_mobile;
+        CFStringRef cf_email = (__bridge CFTypeRef)person.info_email;
+        CFStringRef cf_postion = (__bridge CFTypeRef)person.info_position;
+        CFStringRef cf_company = (__bridge CFTypeRef)person.info_company;
+        CFStringRef cf_url = (__bridge CFTypeRef)person.info_url;
         
         //存名字
         ABRecordSetValue(record, kABPersonFirstNameProperty, cf_name, &error);
@@ -200,11 +185,11 @@
         ABMutableMultiValueRef multiAddress = ABMultiValueCreateMutable(kABMultiDictionaryPropertyType);
         
         //地址要用NSMutableDictionary存
-        NSMutableDictionary *addressDictionary = [[[NSMutableDictionary alloc] init]autorelease];
+        NSMutableDictionary *addressDictionary = [[NSMutableDictionary alloc] init];
         [addressDictionary setObject:person.info_address forKey:(NSString *) kABPersonAddressStreetKey];
         
         //工作 kABWorkLabel
-        ABMultiValueAddValueAndLabel(multiAddress, addressDictionary, kABWorkLabel, NULL);
+        ABMultiValueAddValueAndLabel(multiAddress, (__bridge CFTypeRef)(addressDictionary), kABWorkLabel, NULL);
         ABRecordSetValue(record, kABPersonAddressProperty, multiAddress, &error);
         CFRelease(multiAddress);
         

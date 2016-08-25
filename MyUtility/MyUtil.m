@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <QuartzCore/QuartzCore.h>
+#import "sys/utsname.h"
 @import CoreText;
 
 #pragma mark - StringUtils
@@ -414,7 +415,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 
 + (UILabel *)creatLabelWithFrame:(CGRect)frame WithText:(NSString *)text WithFont:(CGFloat)font WithTextColor:(UIColor *)textColor
 {
-    UILabel *label = [[[UILabel alloc]initWithFrame:frame]autorelease];
+    UILabel *label = [[UILabel alloc]initWithFrame:frame];
     label.text = text;
     label.backgroundColor = [UIColor clearColor];
     [label setTextTypeWithFont:font WithColor:textColor WithLineHeight:0];
@@ -440,7 +441,6 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:self.text];
     [str addAttribute:NSForegroundColorAttributeName value:color range:range];
     self.attributedText = str;
-    [str release];
 }
 
 - (void)setTextTypeWithFont:(CGFloat)font WithColor:(UIColor *)textColor WithLineHeight:(CGFloat)lineHeight
@@ -574,8 +574,8 @@ static char const * const sectionKey = "kUIButtonSectionKey";
         NSPredicate *noEmptyStrings = [NSPredicate predicateWithFormat:@"SELF != ''"];
         NSArray *parts = [self componentsSeparatedByString:@" "];
         NSArray *filteredArray = [parts filteredArrayUsingPredicate:noEmptyStrings];
-        self = [filteredArray componentsJoinedByString:@""];
-        if (self.length > 0) {
+        NSString *tempString = [filteredArray componentsJoinedByString:@""];
+        if (tempString.length > 0) {
             isEmptyOrNull = NO;
         }
     }
@@ -584,7 +584,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 
 - (NSDate *)changeToDateWithFormat:(NSString *)format;
 {
-    NSDateFormatter *formattor = [[[NSDateFormatter alloc]init]autorelease];
+    NSDateFormatter *formattor = [[NSDateFormatter alloc]init];
     [formattor setDateFormat:format];
     NSDate *date = [formattor dateFromString:self];
     return date;
@@ -598,39 +598,38 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 - (NSString *)UTFEncoded {
     if (![self canBeConvertedToEncoding:NSASCIIStringEncoding]) {
         
-        return [[[NSString alloc] initWithData:[self dataUsingEncoding:NSNonLossyASCIIStringEncoding] encoding:NSASCIIStringEncoding] autorelease];
+        return [[NSString alloc] initWithData:[self dataUsingEncoding:NSNonLossyASCIIStringEncoding] encoding:NSASCIIStringEncoding];
     }
     return self;
 }
 
 - (NSString *)UTFDecoded {
-    return [[[NSString alloc] initWithData:[self dataUsingEncoding:NSASCIIStringEncoding] encoding:NSNonLossyASCIIStringEncoding] autorelease];
+    return [[NSString alloc] initWithData:[self dataUsingEncoding:NSASCIIStringEncoding] encoding:NSNonLossyASCIIStringEncoding];
 }
 
 - (NSString *)UFT8Decoded
 {
-    return [[[NSString alloc] initWithData:[self dataUsingEncoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding] autorelease];
+    return [[NSString alloc] initWithData:[self dataUsingEncoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding];
     
 }
 
 - (NSString *)URLEncodedString
 {
-    NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                           (CFStringRef)self,
-                                                                           NULL,
-																		   CFSTR("!*'();:@&=+$,/?%#[]"),
-                                                                           kCFStringEncodingUTF8);
-    [result autorelease];
+    NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                                                             (CFStringRef)self,
+                                                                                             NULL,
+                                                                                             CFSTR("!*'();:@&=+$,/?%#[]"),
+                                                                                             kCFStringEncodingUTF8));
 	return result;
 }
 
 - (NSString*)URLDecodedString
 {
-	NSString *result = (NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
-																						   (CFStringRef)self,
-																						   CFSTR(""),
-																						   kCFStringEncodingUTF8);
-    [result autorelease];
+    NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
+                                                                                                             (CFStringRef)self,
+                                                                                                             CFSTR(""),
+                                                                                                             kCFStringEncodingUTF8));
+
 	return result;
 }
 
@@ -646,12 +645,12 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:target action:action];
     [self addGestureRecognizer:recognizer];
     recognizer.delegate = target;
-	[recognizer release];
+	
     
     recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:target action:action];
     recognizer.direction = UISwipeGestureRecognizerDirectionLeft;
     [self addGestureRecognizer:recognizer];
-    [recognizer release];
+    
 }
 
 
@@ -688,7 +687,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     title.font = [UIFont boldSystemFontOfSize:22];
     title.backgroundColor = [UIColor clearColor];
     self.titleView = title;
-    [title release];
+    
 }
 
 - (void)setCustomTitleViewWithImage:(NSString *)imageName
@@ -696,7 +695,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     UIImageView *titleImageView = [[UIImageView alloc]initWithFrame:self.titleView.frame];
     [titleImageView setImageName:imageName];
     self.titleView = titleImageView;
-    [titleImageView release];
+    
 }
 
 @end
@@ -756,7 +755,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 - (void)setBackBarBtnImage
 {
 
-    UIBarButtonItem *backBarButton = [[[UIBarButtonItem alloc] init]autorelease];
+    UIBarButtonItem *backBarButton = [[UIBarButtonItem alloc] init];
     [backBarButton setBackButtonBackgroundImage:[[UIImage imageWithPNGName:@"back_01"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 15, 4)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [backBarButton setBackButtonBackgroundImage:[[UIImage imageWithPNGName:@"back_02"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 14, 15, 4)] forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
 
@@ -783,7 +782,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     [btn setNormalBgImage:[UIImage imageWithPNGName:name]];
     [btn addTarget:self action:selector forControlEvents:UIControlEventTouchCancel];
     
-    UIBarButtonItem *btnItem = [[[UIBarButtonItem alloc] initWithCustomView:btn]autorelease];
+    UIBarButtonItem *btnItem = [[UIBarButtonItem alloc] initWithCustomView:btn];
     return btnItem;
 }
 
@@ -810,7 +809,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     [self.navigationController.navigationBar setTranslucent:NO];
     
-    UILabel *title = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 25)] autorelease];
+    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 25)];
     title.textColor = RGBCOLOR(80, 103, 116);
     title.text = name;
     title.textAlignment = NSTextAlignmentCenter;
@@ -826,7 +825,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     [self.navigationController.navigationBar setTranslucent:NO];
     
-    UILabel *title = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 25)] autorelease];
+    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 25)];
     title.textColor = RGBCOLOR(80, 103, 116);
     title.text = name;
     title.textAlignment = NSTextAlignmentCenter;
@@ -855,7 +854,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 - (NSString *)timeStringWithFormat:(NSString *)format
 {
-    NSDateFormatter *df = [[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
     [df setDateFormat:format];
     NSString *string = [df stringFromDate:self];
     
@@ -864,7 +863,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 - (NSString *)monthDayFromString
 {
-    NSDateFormatter *df = [[[NSDateFormatter alloc] init]autorelease];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
     [df setDateFormat:@"MM/dd"];
     NSString *dateString = [df stringFromDate:self];
     
@@ -873,7 +872,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 - (NSString *)dateString
 {
-    NSDateFormatter *df = [[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
     [df setDateFormat:@"yyyy-MM-dd"];
     NSString *dateString = [df stringFromDate:self];
     
@@ -888,7 +887,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 	NSDateComponents *componentsToAdd = [[NSDateComponents alloc] init];
 	[componentsToAdd setMonth:month];
 	NSDate *dateAfterMonth = [calendar dateByAddingComponents:componentsToAdd toDate:self options:0];
-	[componentsToAdd release];
 	
 	return dateAfterMonth;
 }
@@ -903,7 +901,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 	// to get the end of week for a particular date, add (7 - weekday) days
 	[componentsToAdd setDay:day];
 	NSDate *dateAfterDay = [calendar dateByAddingComponents:componentsToAdd toDate:self options:0];
-	[componentsToAdd release];
 	
 	return dateAfterDay;
 }
@@ -1013,7 +1010,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     
     
     NSString *resultStr = [NSString stringWithFormat:@"%@~%@",beginString,endString];
-    [myDateFormatter release];
+    
     return resultStr;
 }
 
@@ -1173,12 +1170,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 }
 
 
-//+ (id)chkUpdateEventHandle:(id)handle
-//{
-//    //获得当前版本号
-//}
-
-
 + (BOOL)isValidURL:(NSString *)urlString
 {
     
@@ -1189,12 +1180,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     return isMatch;
 }
 
-+ (id)getObjectFromClassName:(NSString *)className
-{
-    Class cls = NSClassFromString(@"LoginViewController");
-    
-    return [[[[cls class] alloc] init] autorelease];
-}
 
 //判断本地网络是否打开
 +(BOOL)checkNetIsConnect
@@ -1242,7 +1227,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 +(NSString *)GetNowTime{
     
-    NSDateFormatter *tempDate = [[[NSDateFormatter alloc]init] autorelease];
+    NSDateFormatter *tempDate = [[NSDateFormatter alloc]init];
     [tempDate setLocale:[NSLocale currentLocale]];
     
     [tempDate setDateFormat:@"yyyy-MM-dd HH:mm:ss"];//24小时制
@@ -1257,7 +1242,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 +(NSString *)GetNowDate
 {
-    NSDateFormatter *tempDate = [[[NSDateFormatter alloc]init] autorelease];
+    NSDateFormatter *tempDate = [[NSDateFormatter alloc]init];
     [tempDate setLocale:[NSLocale currentLocale]];
     
     [tempDate setDateFormat:@"yyyy-MM-dd"];//
@@ -1271,7 +1256,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 +(NSString *)GetNowYear
 {
-    NSDateFormatter *tempDate = [[[NSDateFormatter alloc]init] autorelease];
+    NSDateFormatter *tempDate = [[NSDateFormatter alloc]init];
     [tempDate setLocale:[NSLocale currentLocale]];
     
     [tempDate setDateFormat:@"yyyy年"];//
@@ -1285,7 +1270,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 +(NSString *)GetNowYearAndMonth
 {
-    NSDateFormatter *tempDate = [[[NSDateFormatter alloc]init] autorelease];
+    NSDateFormatter *tempDate = [[NSDateFormatter alloc]init];
     [tempDate setLocale:[NSLocale currentLocale]];
     
     [tempDate setDateFormat:@"yyyy年MM月"];//
@@ -1300,7 +1285,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSString *)threeDaysAfter
 {
-    NSDateFormatter *tempDate = [[[NSDateFormatter alloc]init] autorelease];
+    NSDateFormatter *tempDate = [[NSDateFormatter alloc]init];
     [tempDate setLocale:[NSLocale currentLocale]];
     
     [tempDate setDateFormat:@"yyyy-MM-dd"];//
@@ -1314,7 +1299,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSString *)dayStringAfter:(NSInteger)days
 {
-    NSDateFormatter *tempDate = [[[NSDateFormatter alloc]init] autorelease];
+    NSDateFormatter *tempDate = [[NSDateFormatter alloc]init];
     [tempDate setLocale:[NSLocale currentLocale]];
     
     [tempDate setDateFormat:@"yyyy-MM-dd"];//
@@ -1343,7 +1328,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
                                           cancelButtonTitle:@"确定"
                                           otherButtonTitles:nil, nil];
     [alert show];
-    [alert release];
 }
 
 + (UIAlertView *)showAlert:(NSString *)message
@@ -1357,7 +1341,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
                                           otherButtonTitles:button2, nil];
     
     [alert show];
-    return [alert autorelease];
+    return alert;
 }
 
 + (void)showAlert:(NSString *)message
@@ -1370,7 +1354,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
                                           otherButtonTitles:nil, nil];
     
     [alert show];
-    [alert release];
 }
 
 + (void)showAlert:(NSString *)message delegate:(id <UIAlertViewDelegate>)delegate
@@ -1381,7 +1364,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
                                           otherButtonTitles:nil, nil];
     
     [alert show];
-    [alert release];
 }
 
 + (void)showMessageBox:(NSString *)message
@@ -1418,7 +1400,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     label.lineBreakMode = NSLineBreakByWordWrapping;
     //label.center = theAppWindow.center;
     [theAppWindow addSubview:label];
-    [label release];
+
     if (hidden) {
         [UIView animateWithDuration:4.5
                          animations:^{
@@ -1450,14 +1432,12 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     //    bg.image = [UIImage imageNamed:@"bg_subviews"];
     bg.userInteractionEnabled = YES;
     [superView addSubview:bg];
-    [bg release];
     
     
     UIActivityIndicatorView *progressdialog = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     progressdialog.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
     progressdialog.center = bg.center;
     [bg addSubview:progressdialog];
-    [progressdialog release];
     
     [progressdialog startAnimating];
 }
@@ -1478,14 +1458,12 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     //    bg.image = [UIImage imageNamed:@"bg_subviews"];
     bg.userInteractionEnabled = YES;
     [superView addSubview:bg];
-    [bg release];
     
     
     UIActivityIndicatorView *progressdialog = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     progressdialog.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
     progressdialog.center = bg.center;
     [bg addSubview:progressdialog];
-    [progressdialog release];
     
     [progressdialog startAnimating];
 }
@@ -1580,7 +1558,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSDate *)dateFromString:(NSString *)string format:(NSString *)format
 {
-    NSDateFormatter *df=[[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
     [df setDateFormat:format];
     NSDate *fromdate=[df dateFromString:string];
     
@@ -1589,7 +1567,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSUInteger)getWeekdayFromDate:(NSDate *)date
 {
-    NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar* calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     NSInteger unitFlags = NSMonthCalendarUnit |
     NSDayCalendarUnit |
@@ -1604,7 +1582,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSString *)getStringFromDate:(NSDate *)date
 {
-    NSDateFormatter *df=[[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
     [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSString *dateString = [df stringFromDate:date];
     
@@ -1613,7 +1591,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSDate *)getDateFromString:(NSString *)string
 {
-    NSDateFormatter *df=[[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
     [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSDate *date = [df dateFromString:string];
     
@@ -1672,7 +1650,74 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:nil message:content cancelButtonItem:btn1 otherButtonItems:btn2, nil];
     
     [alertView show];
-    [alertView autorelease];
+}
+
++ (NSString*)deviceVersion
+{
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString *deviceString = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    
+    //iPhone
+    if ([deviceString isEqualToString:@"iPhone1,1"])    return @"iPhone 1G";
+    if ([deviceString isEqualToString:@"iPhone1,2"])    return @"iPhone 3G";
+    if ([deviceString isEqualToString:@"iPhone2,1"])    return @"iPhone 3GS";
+    if ([deviceString isEqualToString:@"iPhone3,1"])    return @"iPhone 4";
+    if ([deviceString isEqualToString:@"iPhone3,2"])    return @"Verizon iPhone 4";
+    if ([deviceString isEqualToString:@"iPhone4,1"])    return @"iPhone 4S";
+    if ([deviceString isEqualToString:@"iPhone5,1"])    return @"iPhone 5";
+    if ([deviceString isEqualToString:@"iPhone5,2"])    return @"iPhone 5";
+    if ([deviceString isEqualToString:@"iPhone5,3"])    return @"iPhone 5C";
+    if ([deviceString isEqualToString:@"iPhone5,4"])    return @"iPhone 5C";
+    if ([deviceString isEqualToString:@"iPhone6,1"])    return @"iPhone 5S";
+    if ([deviceString isEqualToString:@"iPhone6,2"])    return @"iPhone 5S";
+    if ([deviceString isEqualToString:@"iPhone7,1"])    return @"iPhone 6 Plus";
+    if ([deviceString isEqualToString:@"iPhone7,2"])    return @"iPhone 6";
+    if ([deviceString isEqualToString:@"iPhone8,1"])    return @"iPhone 6s";
+    if ([deviceString isEqualToString:@"iPhone8,2"])    return @"iPhone 6s Plus";
+    if ([deviceString isEqualToString:@"iPhone8,4"])    return @"iPhone SE";
+    
+    //iPod
+    if ([deviceString isEqualToString:@"iPod1,1"])      return @"iPod Touch 1G";
+    if ([deviceString isEqualToString:@"iPod2,1"])      return @"iPod Touch 2G";
+    if ([deviceString isEqualToString:@"iPod3,1"])      return @"iPod Touch 3G";
+    if ([deviceString isEqualToString:@"iPod4,1"])      return @"iPod Touch 4G";
+    if ([deviceString isEqualToString:@"iPod5,1"])      return @"iPod Touch 5G";
+    
+    //iPad
+    if ([deviceString isEqualToString:@"iPad1,1"])      return @"iPad";
+    if ([deviceString isEqualToString:@"iPad2,1"])      return @"iPad 2 (WiFi)";
+    if ([deviceString isEqualToString:@"iPad2,2"])      return @"iPad 2 (GSM)";
+    if ([deviceString isEqualToString:@"iPad2,3"])      return @"iPad 2 (CDMA)";
+    if ([deviceString isEqualToString:@"iPad2,4"])      return @"iPad 2 (32nm)";
+    if ([deviceString isEqualToString:@"iPad2,5"])      return @"iPad mini (WiFi)";
+    if ([deviceString isEqualToString:@"iPad2,6"])      return @"iPad mini (GSM)";
+    if ([deviceString isEqualToString:@"iPad2,7"])      return @"iPad mini (CDMA)";
+    
+    if ([deviceString isEqualToString:@"iPad3,1"])      return @"iPad 3(WiFi)";
+    if ([deviceString isEqualToString:@"iPad3,2"])      return @"iPad 3(CDMA)";
+    if ([deviceString isEqualToString:@"iPad3,3"])      return @"iPad 3(4G)";
+    if ([deviceString isEqualToString:@"iPad3,4"])      return @"iPad 4 (WiFi)";
+    if ([deviceString isEqualToString:@"iPad3,5"])      return @"iPad 4 (4G)";
+    if ([deviceString isEqualToString:@"iPad3,6"])      return @"iPad 4 (CDMA)";
+    
+    if ([deviceString isEqualToString:@"iPad4,1"])      return @"iPad Air";
+    if ([deviceString isEqualToString:@"iPad4,2"])      return @"iPad Air";
+    if ([deviceString isEqualToString:@"iPad4,3"])      return @"iPad Air";
+    if ([deviceString isEqualToString:@"iPad5,3"])      return @"iPad Air 2";
+    if ([deviceString isEqualToString:@"iPad5,4"])      return @"iPad Air 2";
+    if ([deviceString isEqualToString:@"i386"])         return @"Simulator";
+    if ([deviceString isEqualToString:@"x86_64"])       return @"Simulator";
+    
+    if ([deviceString isEqualToString:@"iPad4,4"]
+        ||[deviceString isEqualToString:@"iPad4,5"]
+        ||[deviceString isEqualToString:@"iPad4,6"])      return @"iPad mini 2";
+    
+    if ([deviceString isEqualToString:@"iPad4,7"]
+        ||[deviceString isEqualToString:@"iPad4,8"]
+        ||[deviceString isEqualToString:@"iPad4,9"])      return @"iPad mini 3";
+    
+    return deviceString;
 }
 
 @end
