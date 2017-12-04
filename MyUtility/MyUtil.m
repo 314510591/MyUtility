@@ -447,7 +447,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 {
     NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc] initWithString:self.text];
     NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.lineSpacing = 0;
+    paragraphStyle.lineSpacing = lineHeight;
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [self.text length])];
     [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:font] range:NSMakeRange(0, [self.text length])];
     [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, [self.text length])];
@@ -1146,7 +1146,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 + (UIFont*)customFontWithPath:(NSString*)path size:(CGFloat)size
 {
     NSURL *fontUrl = [NSURL fileURLWithPath:path];
-    CGDataProviderRef fontDataProvider = CGDataProviderCreateWithURL((__bridge CFURLRef)fontUrl);
+    CGDataProviderRef fontDataProvider = CGDataProviderCreateWithURL((__bridge CFURLRef)fontUrl);    
     CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProvider);
     CGDataProviderRelease(fontDataProvider);
     CTFontManagerRegisterGraphicsFont(fontRef, NULL);
