@@ -625,7 +625,7 @@ static char const * const sectionKey = "kUIButtonSectionKey";
 
 - (NSString*)URLDecodedString
 {
-    NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
+     NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
                                                                                                              (CFStringRef)self,
                                                                                                              CFSTR(""),
                                                                                                              kCFStringEncodingUTF8));
@@ -805,6 +805,18 @@ static char const * const sectionKey = "kUIButtonSectionKey";
     }
 }
 
+- (void)showAlertViewWithTitle:(NSString *)title Message:(NSString *)message ConfirmBtnTitle:(NSString *)confirmBtnTitle CancelBtnTitle:(NSString *)cancelBtnTitle ClickAction:(void (^)(UIAlertAction *action))clickAction{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *confimAction = [UIAlertAction actionWithTitle:confirmBtnTitle style:UIAlertActionStyleDefault handler:clickAction];
+    [alert addAction:confimAction];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelBtnTitle style:UIAlertActionStyleCancel handler:clickAction];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (void)setCustomTitle:(NSString *)name
 {
     [self.navigationController.navigationBar setTranslucent:NO];
@@ -909,7 +921,9 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 - (NSUInteger)getMonth
 {
 	NSCalendar *calendar = [NSCalendar currentCalendar];
-	NSDateComponents *dayComponents = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekCalendarUnit | NSWeekdayCalendarUnit | NSWeekOfMonthCalendarUnit | NSWeekOfYearCalendarUnit fromDate:self];
+    
+    NSDateComponents *dayComponents = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitWeekday | NSCalendarUnitWeekOfYear | NSCalendarUnitWeekOfMonth fromDate:self];
+    
 	return [dayComponents month];
 }
 
@@ -917,7 +931,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 - (NSUInteger)getYear
 {
 	NSCalendar *calendar = [NSCalendar currentCalendar];
-	NSDateComponents *dayComponents = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekCalendarUnit | NSWeekdayCalendarUnit | NSWeekOfMonthCalendarUnit | NSWeekOfYearCalendarUnit fromDate:self];
+	NSDateComponents *dayComponents = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitWeekday | NSCalendarUnitWeekOfYear | NSCalendarUnitWeekOfMonth fromDate:self];
 	return [dayComponents year];
 }
 
@@ -925,7 +939,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 - (NSInteger)getWeekOfMonth
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
-	NSDateComponents *dayComponents = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekCalendarUnit | NSWeekdayCalendarUnit | NSWeekOfMonthCalendarUnit | NSWeekOfYearCalendarUnit fromDate:self];
+	NSDateComponents *dayComponents = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitWeekday | NSCalendarUnitWeekOfYear | NSCalendarUnitWeekOfMonth fromDate:self];
 	return [dayComponents weekOfMonth];
 }
 
@@ -933,14 +947,14 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 - (NSInteger)getWeekOfYear
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *dayComponents = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekCalendarUnit | NSWeekdayCalendarUnit | NSWeekOfMonthCalendarUnit | NSWeekOfYearCalendarUnit fromDate:self];
+    NSDateComponents *dayComponents = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitWeekday | NSCalendarUnitWeekOfYear | NSCalendarUnitWeekOfMonth fromDate:self];
     return [dayComponents weekOfYear];
 }
 
 //获取日
 - (NSUInteger)getDay{
 	NSCalendar *calendar = [NSCalendar currentCalendar];
-	NSDateComponents *dayComponents = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekCalendarUnit | NSWeekdayCalendarUnit | NSWeekOfMonthCalendarUnit | NSWeekOfYearCalendarUnit fromDate:self];
+	NSDateComponents *dayComponents = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitWeekday | NSCalendarUnitWeekOfYear | NSCalendarUnitWeekOfMonth fromDate:self];
 	return [dayComponents day];
 }
 
@@ -959,7 +973,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 //返回一周的第几天(周末为第一天)
 - (NSUInteger)weekday {
 	NSCalendar *calendar = [NSCalendar currentCalendar];
-	NSDateComponents *weekdayComponents = [calendar components:(NSWeekdayCalendarUnit) fromDate:self];
+	NSDateComponents *weekdayComponents = [calendar components:(NSCalendarUnitWeekday) fromDate:self];
 	return [weekdayComponents weekday];
 }
 
@@ -1321,51 +1335,6 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     return [[[UIDevice currentDevice] systemVersion] doubleValue] >= 7.0;
 }
 
-+ (void)showAlert:(NSString *)message
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                    message:message delegate:nil
-                                          cancelButtonTitle:@"确定"
-                                          otherButtonTitles:nil, nil];
-    [alert show];
-}
-
-+ (UIAlertView *)showAlert:(NSString *)message
-         delegate:(id <UIAlertViewDelegate>)delegate
-          button1:(NSString *)button1
-          button2:(NSString *)button2
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                    message:message delegate:delegate
-                                          cancelButtonTitle:button1
-                                          otherButtonTitles:button2, nil];
-    
-    [alert show];
-    return alert;
-}
-
-+ (void)showAlert:(NSString *)message
-         delegate:(id <UIAlertViewDelegate>)delegate
-           button:(NSString *)button
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                    message:message delegate:delegate
-                                          cancelButtonTitle:button
-                                          otherButtonTitles:nil, nil];
-    
-    [alert show];
-}
-
-+ (void)showAlert:(NSString *)message delegate:(id <UIAlertViewDelegate>)delegate
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                    message:message delegate:delegate
-                                          cancelButtonTitle:@"确定"
-                                          otherButtonTitles:nil, nil];
-    
-    [alert show];
-}
-
 + (void)showMessageBox:(NSString *)message
 {
     if ([theAppWindow viewWithTag:99999]) {
@@ -1567,11 +1536,11 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
 
 + (NSUInteger)getWeekdayFromDate:(NSDate *)date
 {
-    NSCalendar* calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSCalendar* calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
-    NSInteger unitFlags = NSMonthCalendarUnit |
-    NSDayCalendarUnit |
-    NSWeekdayCalendarUnit;
+    NSInteger unitFlags = NSCalendarUnitMonth |
+    NSCalendarUnitDay |
+    NSCalendarUnitWeekday;
     
     NSDateComponents* components = [calendar components:unitFlags fromDate:date];
     NSUInteger weekday = [components weekday];
@@ -1632,25 +1601,7 @@ static NSDateFormatter *_internetDateTimeFormatter = nil;
     }
 }
 
-+ (void)showAlertWithContent:(NSString*)content BtnText1:(NSString*)text1 Action1:(void(^)(void))action1 BtnText2:(NSString*)text2 Action2:(void(^)(void))action2
-{
-    RIButtonItem* btn1 = nil;
-    RIButtonItem* btn2 = nil;
-    
-    if(text1)
-    {
-        btn1 = [RIButtonItem itemWithLabel:text1 action:action1];
-    }
-    
-    if(text1)
-    {
-        btn2 = [RIButtonItem itemWithLabel:text2 action:action2];
-    }
-    
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:nil message:content cancelButtonItem:btn1 otherButtonItems:btn2, nil];
-    
-    [alertView show];
-}
+
 
 + (NSString*)deviceVersion
 {

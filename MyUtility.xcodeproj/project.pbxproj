@@ -26,11 +26,8 @@
 		849ABEB019B950C800733268 /* MyUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 849ABEAF19B950C800733268 /* MyUtilityTests.m */; };
 		849ABEBD19B9511E00733268 /* MyUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 849ABEBA19B9511E00733268 /* MyUtil.m */; };
 		849ABEC519B9BC1000733268 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 849ABEC319B9BC1000733268 /* NSString+UUID.m */; };
-		84AAF5201A5E6404003C2F62 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 84AAF51F1A5E6404003C2F62 /* UIAlertView+Blocks.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
-		84AAF5231A5E6412003C2F62 /* RIButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 84AAF5221A5E6412003C2F62 /* RIButtonItem.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		84FC7AAF1A10991500AD51D3 /* NSObject+AutoSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FC7AAC1A10991500AD51D3 /* NSObject+AutoSerialization.m */; };
 		84FC7AB01A10991500AD51D3 /* AutoSerializeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FC7AAE1A10991500AD51D3 /* AutoSerializeObject.m */; };
-		C9ADACE81B156D6100A5CFEF /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ADACE71B156D6100A5CFEF /* UIViewAdditions.m */; };
 		C9E398F01B01F35600512EA7 /* GetInfoFromIDCard.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E398EF1B01F35600512EA7 /* GetInfoFromIDCard.m */; };
 /* End PBXBuildFile section */
 
@@ -74,16 +71,10 @@
 		849ABEBA19B9511E00733268 /* MyUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyUtil.m; sourceTree = "<group>"; };
 		849ABEC319B9BC1000733268 /* NSString+UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UUID.m"; sourceTree = "<group>"; };
 		849ABEC419B9BC1000733268 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
-		84AAF51E1A5E6404003C2F62 /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Blocks.h"; sourceTree = "<group>"; };
-		84AAF51F1A5E6404003C2F62 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
-		84AAF5211A5E6412003C2F62 /* RIButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RIButtonItem.h; sourceTree = "<group>"; };
-		84AAF5221A5E6412003C2F62 /* RIButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RIButtonItem.m; sourceTree = "<group>"; };
 		84FC7AAB1A10991500AD51D3 /* NSObject+AutoSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AutoSerialization.h"; sourceTree = "<group>"; };
 		84FC7AAC1A10991500AD51D3 /* NSObject+AutoSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AutoSerialization.m"; sourceTree = "<group>"; };
 		84FC7AAD1A10991500AD51D3 /* AutoSerializeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoSerializeObject.h; sourceTree = "<group>"; };
 		84FC7AAE1A10991500AD51D3 /* AutoSerializeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoSerializeObject.m; sourceTree = "<group>"; };
-		C9ADACE61B156D6100A5CFEF /* UIViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewAdditions.h; sourceTree = "<group>"; };
-		C9ADACE71B156D6100A5CFEF /* UIViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewAdditions.m; sourceTree = "<group>"; };
 		C9E398EE1B01F35600512EA7 /* GetInfoFromIDCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetInfoFromIDCard.h; sourceTree = "<group>"; };
 		C9E398EF1B01F35600512EA7 /* GetInfoFromIDCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetInfoFromIDCard.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,8 +143,6 @@
 				849ABE9A19B950C800733268 /* ViewController.m */,
 				849ABEB919B9511E00733268 /* MyUtil.h */,
 				849ABEBA19B9511E00733268 /* MyUtil.m */,
-				C9ADACE61B156D6100A5CFEF /* UIViewAdditions.h */,
-				C9ADACE71B156D6100A5CFEF /* UIViewAdditions.m */,
 				C9E398EE1B01F35600512EA7 /* GetInfoFromIDCard.h */,
 				C9E398EF1B01F35600512EA7 /* GetInfoFromIDCard.m */,
 				84FC7AAB1A10991500AD51D3 /* NSObject+AutoSerialization.h */,
@@ -168,10 +157,6 @@
 				845ECE4D1A020E3D00B6B287 /* ChineseToPinyin.m */,
 				84157E5C1A14A909005C2021 /* AddContactAction.h */,
 				84157E5D1A14A909005C2021 /* AddContactAction.m */,
-				84AAF51E1A5E6404003C2F62 /* UIAlertView+Blocks.h */,
-				84AAF51F1A5E6404003C2F62 /* UIAlertView+Blocks.m */,
-				84AAF5211A5E6412003C2F62 /* RIButtonItem.h */,
-				84AAF5221A5E6412003C2F62 /* RIButtonItem.m */,
 				849ABE9C19B950C800733268 /* Images.xcassets */,
 				849ABE8B19B950C800733268 /* Supporting Files */,
 			);
@@ -251,7 +236,7 @@
 		849ABE7919B950C800733268 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = YMQ;
 				TargetAttributes = {
 					849ABEA119B950C800733268 = {
@@ -306,14 +291,11 @@
 			files = (
 				849ABE9B19B950C800733268 /* ViewController.m in Sources */,
 				84FC7AAF1A10991500AD51D3 /* NSObject+AutoSerialization.m in Sources */,
-				C9ADACE81B156D6100A5CFEF /* UIViewAdditions.m in Sources */,
 				C9E398F01B01F35600512EA7 /* GetInfoFromIDCard.m in Sources */,
 				849ABE9519B950C800733268 /* AppDelegate.m in Sources */,
-				84AAF5231A5E6412003C2F62 /* RIButtonItem.m in Sources */,
 				8425B46819C52A7900447C68 /* NSData+AES.m in Sources */,
 				845ECE4E1A020E3D00B6B287 /* ChineseToPinyin.m in Sources */,
 				84FC7AB01A10991500AD51D3 /* AutoSerializeObject.m in Sources */,
-				84AAF5201A5E6404003C2F62 /* UIAlertView+Blocks.m in Sources */,
 				849ABE9119B950C800733268 /* main.m in Sources */,
 				849ABEC519B9BC1000733268 /* NSString+UUID.m in Sources */,
 				84157E5E1A14A909005C2021 /* AddContactAction.m in Sources */,
@@ -375,18 +357,30 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -399,7 +393,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -413,25 +407,36 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -447,6 +452,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MyUtility/MyUtility-Prefix.pch";
 				INFOPLIST_FILE = "MyUtility/MyUtility-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "soarsky.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -462,6 +469,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MyUtility/MyUtility-Prefix.pch";
 				INFOPLIST_FILE = "MyUtility/MyUtility-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "soarsky.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -483,6 +492,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "MyUtilityTests/MyUtilityTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "soarsky.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -501,6 +511,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MyUtility/MyUtility-Prefix.pch";
 				INFOPLIST_FILE = "MyUtilityTests/MyUtilityTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "soarsky.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "AppDelegate.h"
+#import "AddContactAction.h"
+#import "ChineseToPinyin.h"
 
 @interface ViewController ()
 
@@ -40,6 +42,7 @@
     btn.backgroundColor = [UIColor blackColor];
     btn.section = 20;
     [self.view addSubview:btn];
+    
 }
 
 - (void)btnClick:(UIButton *)btn

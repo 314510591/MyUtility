@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "UIAlertView+Blocks.h"
+
 
 
 #define ISNULL(__pointer)           (__pointer == nil || [[NSNull null] isEqual:__pointer])
@@ -232,6 +232,8 @@ return s_pInstance; \
 
 - (void)back;
 
+- (void)showAlertViewWithTitle:(NSString *)title Message:(NSString *)message ConfirmBtnTitle:(NSString *)confirmBtnTitle CancelBtnTitle:(NSString *)cancelBtnTitle ClickAction:(void (^)(UIAlertAction *action))clickAction;
+
 @end
 
 #pragma mark - NSDate (YMQ_Utilities)
@@ -320,16 +322,8 @@ typedef enum {
 + (BOOL)isIOS7OrLater;
 
 + (void)showMessageBox:(NSString *)message;
-+ (void)showAlert:(NSString *)message;
-+ (void)showAlert:(NSString *)message
-         delegate:(id <UIAlertViewDelegate>)delegate;
-+ (void)showAlert:(NSString *)message
-         delegate:(id <UIAlertViewDelegate>)delegate
-           button:(NSString *)button;
-+ (UIAlertView *)showAlert:(NSString *)message
-                  delegate:(id <UIAlertViewDelegate>)delegate
-                   button1:(NSString *)button1
-                   button2:(NSString *)button2;
+
+
 + (CGFloat)viewHeight;
 
 + (void)createProgressDialog:(UIView *)superView;
@@ -348,5 +342,4 @@ typedef enum {
 + (NSString *)getTmpPath;
 + (void)createFileInSandboxWithName:(NSString *)name;
 
-+ (void) showAlertWithContent:(NSString*)content BtnText1:(NSString*)text1 Action1:(void(^)(void))action1 BtnText2:(NSString*)text2 Action2:(void(^)(void))action2;
 @end
